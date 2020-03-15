@@ -34,11 +34,17 @@ updateSystemClock() {
 
 	echo "clock: ok               "
 	echo "                        "
+
+}
+
+listDisks () {
+ 	lsblk | grep -oP '(sd[a-zA-Z]+)'
 }
  
 main () {
 	testInternet
 	updateSystemClock
+	listDisks
 
 	todo
 }
