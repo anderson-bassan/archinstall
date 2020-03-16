@@ -38,13 +38,33 @@ updateSystemClock() {
 }
 
 listDisks () {
- 	lsblk | grep -oP '(sd[a-zA-Z]+)'
+	disks=($(lsblk | grep -oP '(sd[a-zA-Z]+)'))
+	echo ${disks[*]}
+}
+
+formatDisk () {
+	disks=$(listDisks)
+	if [ ${#disks[@]} -eq 1 ]
+	then
+		disk=${disks[0]}
+	else
+		echo "chose the disk:"
+		for i in ${!disks[@]};do
+			echo "    [${i}] ${disks[i]}"
+		done
+	fi
+
+	echo " "
+	read -p "disk[0|1|n]: " diskNumber
+	disk=$(echo "${disks[$diskNumber]}")
+	echo "${disk}"
+	
 }
  
 main () {
 	testInternet
 	updateSystemClock
-	listDisks
+	formatDisk
 
 	todo
 }
