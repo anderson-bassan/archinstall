@@ -42,6 +42,21 @@ listDisks () {
 	echo ${disks[*]}
 }
 
+deleteDisk () {
+	disk=$1
+	partitionsNumbers=$(echo "p" | fdisk $(echo "/dev/${disk}") | grep -oP '(/dev/sd[a-z]+[0-9]+)' | grep -oP '[0-9]+')
+	for partition in $partitionsNumbers
+	do
+		(echo "d"; echo $partition; echo "w";) |  fdisk $(echo "/dev/$(echo $disk)")
+
+	done
+}
+
+makeSwap () {
+	read -p "swap size[GB]: " swap_size
+	
+}
+
 formatDisk () {
 	disks=$(listDisks)
 	if [ ${#disks[@]} -eq 1 ]
@@ -52,12 +67,21 @@ formatDisk () {
 		for i in ${!disks[@]};do
 			echo "    [${i}] ${disks[i]}"
 		done
+
+		echo " "
+		read -p "disk[0|1|n]: " diskNumber
+		disk=$(echo "${disks[$diskNumber]}")
+	
 	fi
 
-	echo " "
-	read -p "disk[0|1|n]: " diskNumber
-	disk=$(echo "${disks[$diskNumber]}")
-	echo "${disk}"
+	deleteDisk $disk
+
+	read -p "make swap on the hd?[y/n] " make_swap
+	if [ "$make_swap" == "y" ]
+	then
+		makeSwap
+
+	fi
 	
 }
  
