@@ -56,7 +56,7 @@ makeSwap () {
 	disk=$1
 
 	read -p "swap size[GB]: " swap_size
-	(echo "n"; echo "e"; echo " "; echo " "; echo "+${swap_size}G"; echo "w") | fdisk $(echo "/dev/${disk}")
+	(echo "n"; echo "e"; echo " "; echo " "; echo "+${swap_size}G"; echo "t"; echo "82"; echo "w") | fdisk $(echo "/dev/${disk}")
 	
 }
 
