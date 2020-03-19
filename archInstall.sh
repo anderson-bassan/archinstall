@@ -53,7 +53,10 @@ deleteDisk () {
 }
 
 makeSwap () {
+	disk=$1
+
 	read -p "swap size[GB]: " swap_size
+	(echo "n"; echo "e"; echo " "; echo " "; echo "+${swap_size}G"; echo "w") | fdisk $(echo "/dev/${disk}")
 	
 }
 
@@ -79,7 +82,7 @@ formatDisk () {
 	read -p "make swap on the hd?[y/n] " make_swap
 	if [ "$make_swap" == "y" ]
 	then
-		makeSwap
+		makeSwap $disk
 
 	fi
 	
