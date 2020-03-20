@@ -4,8 +4,6 @@ todo() {
 	echo "                              "
 	echo "         ##  TODO  ##         "
 	echo "                              "
-	echo "  * install                   "
-	echo "  * configurate               "
 	echo "  * install grub              "
 	echo "                              "
 }
@@ -117,14 +115,30 @@ formatDisk () {
 installArch () {	
 	archPartition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)')
 	mount $(echo $archPartition) /mnt
-	pacstrap /mnt base linux linux-firmware
+	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd
 }
  
+postConfig () {
+	genfstab -U /mnt >> /mnt/etc/fstab
+	arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+	arch-chroot /mnt hwclock --systohc
+	echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
+	arch-chroot /mnt locale-gen
+	echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+	echo "KEYMAP=de-latin1" > /mnt/etc/vconsole.conf
+	echo "k-arla" > /mnt/etc/hostname
+	echo "127.0.0.1		localhost" > /mnt/etc/hosts
+	echo "::1			localhost" >> /mnt/etc/hosts
+	echo "127.0.1.1		k-arla.com k-arla" >> /mnt/etc/hosts
+
+}
+
 main () {
-	testInternet
-	updateSystemClock
-	formatDisk
-	installArch
+#	testInternet
+#	updateSystemClock
+#	formatDisk
+#	installArch
+	postConfig
 
 	todo
 }
