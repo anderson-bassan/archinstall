@@ -4,8 +4,6 @@ todo() {
 	echo "                              "
 	echo "         ##  TODO  ##         "
 	echo "                              "
-	echo "  * partitionate disks        "
-	echo "  * format                    "
 	echo "  * install                   "
 	echo "  * configurate               "
 	echo "  * install grub              "
@@ -73,6 +71,19 @@ makeSwap () {
 	echo "                           "
 }
 
+makeExt4 () {
+	disk=$1
+
+	echo "                          "
+	echo "creating arch partition..."
+
+	(echo "n"; echo "p"; echo " "; echo " "; echo " "; echo "w") | fdisk $(echo "/dev/${disk}") >& /dev/null
+	mkfs.ext4 $((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)') >& /dev/null
+
+	echo "arch partition: ok        "
+	echo "                          "
+}
+
 formatDisk () {
 	disks=$(listDisks)
 	if [ ${#disks[@]} -eq 1 ]
@@ -98,6 +109,8 @@ formatDisk () {
 		makeSwap $disk
 
 	fi
+
+	makeExt4 $disk
 	
 }
  
