@@ -113,11 +113,18 @@ formatDisk () {
 	makeExt4 $disk
 	
 }
+
+installArch () {	
+	archPartition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)')
+	mount $(echo $archPartition) /mnt
+	pacstrap /mnt base linux linux-firmware
+}
  
 main () {
 	testInternet
 	updateSystemClock
 	formatDisk
+	installArch
 
 	todo
 }
