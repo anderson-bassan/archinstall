@@ -43,21 +43,34 @@ listDisks () {
 }
 
 deleteDisk () {
+	echo "cleaning the disk..."
+
 	disk=$1
 	partitionsNumbers=$(echo "p" | fdisk $(echo "/dev/${disk}") | grep -oP '(/dev/sd[a-z]+[0-9]+)' | grep -oP '[0-9]+')
 	for partition in $partitionsNumbers
 	do
-		(echo "d"; echo $partition; echo "w";) |  fdisk $(echo "/dev/$(echo $disk)")
+		(echo "d"; echo $partition; echo "w";) |  fdisk $(echo "/dev/$(echo $disk)") >& /dev/null
 
 	done
+
+	echo "disk: ok            "
+	echo "                    "
 }
 
 makeSwap () {
 	disk=$1
+	read -p "swap size [GB]: " swap_size
 
-	read -p "swap size[GB]: " swap_size
-	(echo "n"; echo "e"; echo " "; echo " "; echo "+${swap_size}G"; echo "t"; echo "82"; echo "w") | fdisk $(echo "/dev/${disk}")
-	
+	echo "                          "
+	echo "creating swap partition..."
+
+	(echo "n"; echo "e"; echo " "; echo " "; echo "+${swap_size}G"; echo "t"; echo "82"; echo "w") | fdisk $(echo "/dev/${disk}") >& /dev/null
+	swap_partition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep swap | grep -oP '(/dev/sd[a-z]+[0-9]+)')	
+	mkswap $(echo $swap_partition) >& /dev/null
+	swapon $(echo $swap_partition) >& /dev/null
+
+	echo "swap: ok                   "
+	echo "                           "
 }
 
 formatDisk () {
