@@ -113,12 +113,18 @@ formatDisk () {
 }
 
 installArch () {	
+	echo "installing software..."
+	echo "                      "
 	archPartition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)')
 	mount $(echo $archPartition) /mnt
 	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd
+	echo "software: ok          "
+	echo "                      "
 }
  
 postConfig () {
+	echo "configurating the system..."
+	echo "                           "
 	genfstab -U /mnt >> /mnt/etc/fstab
 	arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 	arch-chroot /mnt hwclock --systohc
@@ -131,14 +137,29 @@ postConfig () {
 	echo "::1			localhost" >> /mnt/etc/hosts
 	echo "127.0.1.1		k-arla.com k-arla" >> /mnt/etc/hosts
 
+	echo "configuration: ok          "
+	echo "                           "
+
+}
+
+grubInstall () {
+	echo "installing grub..."
+	echo "                  "
+
+	arch-chroot /mnt grub-install --target=i386-pc $(echo "/dev/${disk}")
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+	echo "grub: ok          "
+	echo "                  "
 }
 
 main () {
-#	testInternet
-#	updateSystemClock
-#	formatDisk
-#	installArch
+	testInternet
+	updateSystemClock
+	formatDisk
+	installArch
 	postConfig
+	grubInstall
 
 	todo
 }
