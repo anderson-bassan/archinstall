@@ -131,7 +131,7 @@ postConfig () {
 	echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
 	arch-chroot /mnt locale-gen
 	echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
-	echo "KEYMAP=de-latin1" > /mnt/etc/vconsole.conf
+	echo "KEYMAP=us" > /mnt/etc/vconsole.conf
 	echo "k-arla" > /mnt/etc/hostname
 	echo "127.0.0.1		localhost" > /mnt/etc/hosts
 	echo "::1			localhost" >> /mnt/etc/hosts
@@ -157,7 +157,7 @@ addUser () {
 	read -p "your username: " username
 	
 	arch-chroot /mnt groupadd sudo
-	arch-chroot /mnt useradd -m -G sudo $username
+	arch-chroot /mnt useradd -m -G sudo $username -s /bin/bash
 
 	echo "                                "
 	echo "chose the ${username} password! "
