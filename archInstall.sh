@@ -117,7 +117,7 @@ installArch () {
 	echo "                      "
 	archPartition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)')
 	mount $(echo $archPartition) /mnt
-	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd
+	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd sudo
 	echo "software: ok          "
 	echo "                      "
 }
@@ -153,13 +153,27 @@ grubInstall () {
 	echo "                  "
 }
 
+addUser () {
+	read -p "your username: " username
+	
+	arch-chroot /mnt groupadd sudo
+	arch-chroot /mnt useradd -m -G sudo $username
+	echo "%sudo ALL=(ALL) ALL" >> /mnt/etc/sudoers
+}
+
+rootPass () {
+	chroot /mnt passwd
+}
+
 main () {
-	testInternet
-	updateSystemClock
-	formatDisk
-	installArch
-	postConfig
-	grubInstall
+	#testInternet
+	#updateSystemClock
+	#formatDisk
+	#installArch
+	#postConfig
+	#grubInstall
+	#addUser
+	rootPass
 
 	todo
 }
