@@ -117,7 +117,7 @@ installArch () {
 	echo "                      "
 	archPartition=$((echo "p") | fdisk $(echo "/dev/${disk}") | grep "83 Linux" | grep -oP '(/dev/sd[a-z]+[0-9]+)')
 	mount $(echo $archPartition) /mnt
-	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd sudo
+	pacstrap /mnt base linux linux-firmware nano vi vim iputils dhcpcd grub sudo
 	echo "software: ok          "
 	echo "                      "
 }
@@ -172,11 +172,11 @@ rootPass () {
 }
 
 main () {
-	#testInternet
-	#updateSystemClock
-	#formatDisk
-	#installArch
-	#postConfig
+	testInternet
+	updateSystemClock
+	formatDisk
+	installArch
+	postConfig
 	grubInstall
 	addUser
 	rootPass
