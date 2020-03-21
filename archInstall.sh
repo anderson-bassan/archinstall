@@ -158,10 +158,16 @@ addUser () {
 	
 	arch-chroot /mnt groupadd sudo
 	arch-chroot /mnt useradd -m -G sudo $username
+
+	echo "                                "
+	echo "chose the ${username} password! "
+	arch-chroot /mnt passwd $username
 	echo "%sudo ALL=(ALL) ALL" >> /mnt/etc/sudoers
 }
 
 rootPass () {
+	echo "                                "
+	echo "choose the root password!       "
 	chroot /mnt passwd
 }
 
@@ -171,8 +177,8 @@ main () {
 	#formatDisk
 	#installArch
 	#postConfig
-	#grubInstall
-	#addUser
+	grubInstall
+	addUser
 	rootPass
 
 	todo
