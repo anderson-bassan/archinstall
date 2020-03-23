@@ -178,8 +178,8 @@ main () {
 	installArch
 	postConfig
 	grubInstall
-	addUser
 	rootPass
+	addUser
 
 	todo
 }
